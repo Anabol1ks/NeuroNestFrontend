@@ -2,18 +2,16 @@ import Image from "next/image";
 import { Unbounded } from 'next/font/google'
 import icon48 from '@/public/NeuroNest48.svg'
 import IconWithAnimation from '@/components/IconWithAnimation'
-import HeaderComponent from '@/components/HeaderComponent'
-import { Dialog } from '@radix-ui/react-dialog'
 
 const unbounded = Unbounded({ subsets: ['latin'] });
 
-export default function Home() {
-  return (
+export default function HeaderComponent() {
+	return (
 		<>
-			<HeaderComponent/>
-			<Dialog>
-				
-			</Dialog>
+			<header>
+				<IconWithAnimation />
+				<button className='auth_button'>Войти</button>
+			</header>
 		</>
 	)
 }
