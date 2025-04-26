@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export default function DialogAuthComponent() {
 	return (
-		<DialogContent className='bg-[#1c1c21] rounded-2xl w-[900px] h-[850px]'>
+		<DialogContent className='bg-[#1c1c21] rounded-2xl max-w-[60%] min-w-[60%] w-full h-auto'>
 			<DialogHeader>
 				<Tabs defaultValue='login' className='w-full'>
 					<TabsList className='mx-auto mt-5'>
@@ -31,29 +31,29 @@ export default function DialogAuthComponent() {
 						<Input
 							type='email'
 							placeholder='Email'
-							className='text-amber-50 font-black text-[18px] pl-6 border-s-2 border-[#000000] bg-[#18181c] max-w-4/6 mx-auto mt-8 min-h-1/4'
+							className='text-amber-50 font-black text-[18px] pl-6 border-s-2 border-[#000000] bg-[#18181c] mx-auto mt-6 px-4 w-full max-w-[70%] h-14'
 						/>
 						<Input
 							type='password'
 							placeholder='Password'
-							className='text-amber-50 font-black text-[18px] pl-6 border-s-2 border-[#000000] bg-[#18181c] max-w-4/6 mx-auto mt-8 min-h-1/4'
+							className='text-amber-50 font-black text-[18px] pl-6 border-s-2 border-[#000000] bg-[#18181c] mx-auto mt-6 px-4 w-full max-w-[70%] h-14'
 						/>
 					</TabsContent>
 					<TabsContent value='register'>
 						<Input
 							type='text'
 							placeholder='Имя'
-							className='text-amber-50 font-black text-[18px] pl-6 border-s-2 border-[#000000] bg-[#18181c] max-w-4/6 mx-auto mt-8 min-h-1/4'
+							className='text-amber-50 font-black text-[18px] pl-6 border-s-2 border-[#000000] bg-[#18181c] mx-auto mt-6 px-4 w-full max-w-[70%] h-14'
 						/>
 						<Input
 							type='email'
 							placeholder='Email'
-							className='text-amber-50 font-black text-[18px] pl-6 border-s-2 border-[#000000] bg-[#18181c] max-w-4/6 mx-auto mt-8 min-h-1/4'
+							className='text-amber-50 font-black text-[18px] pl-6 border-s-2 border-[#000000] bg-[#18181c] mx-auto mt-6 px-4 w-full max-w-[70%] h-14'
 						/>
 						<Input
 							type='password'
 							placeholder='Password'
-							className='text-amber-50 font-black text-[18px] pl-6 border-s-2 border-[#000000] bg-[#18181c] max-w-4/6 mx-auto mt-8 min-h-1/4'
+							className='text-amber-50 font-black text-[18px] pl-6 border-s-2 border-[#000000] bg-[#18181c] mx-auto mt-6 px-4 w-full max-w-[70%] h-14'
 						/>
 					</TabsContent>
 				</Tabs>
