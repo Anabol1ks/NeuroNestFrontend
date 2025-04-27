@@ -13,18 +13,24 @@ import {
 } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Input } from '@/components/ui/input'
+import { updateProfile } from '@/lib/api'
+import Cookies from 'js-cookie';
 
 export default function Profile() {
 	const { user } = useAuth()
 
 	const [nickname, setNickname] = useState('')
+	const [first_name, setFirstName] = useState('')
+	const [last_name, setLastName] = useState('')
 	const [email, setEmail] = useState('')
 	const [isEmailFocused, setIsEmailFocused] = useState(false)
 
 	useEffect(() => {
 		if (user) {
 			setNickname(user.nickname || '')
-			setEmail(user.email || '')
+			// setEmail(user.email || '')
+			setFirstName(user.first_name || '')
+			setLastName(user.last_name || '')
 		}
 	}, [user])
 
@@ -34,6 +40,39 @@ export default function Profile() {
 		if (localPart.length <= 5) return email // слишком короткий — не обрезаем
 		return `${localPart.slice(0, 3)}.............${localPart.slice(-1)}@${domain}`
 	}
+
+	const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+	const token = Cookies.get('access_token')
+
+	const setUpdateFirstName = (first_name: string) => {
+		setFirstName(first_name);
+	}
+
+	const handlerUpdate  = async () => {
+		setLoading(true);
+		setError('');
+		const updatedData: {
+			nickname?: string
+			first_name?: string
+			last_name?: string
+		} = {}
+		if (nickname !== user.nickname) updatedData.nickname = nickname.trim()
+		if (first_name !== user.first_name)
+			updatedData.first_name = first_name.trim()
+		if (last_name !== user.last_name) updatedData.last_name = last_name.trim()
+		console.log('Отправляемые данные:', updatedData)
+
+		try {
+			await updateProfile(token!, updatedData)
+		} catch (e: any) {
+			setError(e.message);
+			console.error('Ошибка обновления профиля:', e)
+		} finally {
+			setLoading(false);
+		}
+	};
 
 	return (
 		<>
@@ -61,23 +100,41 @@ export default function Profile() {
 								className='text-amber-50 font-black text-[18px]'
 							/>
 						</div>
-
-						<div className='mt-6'>
-							<p className='text-lg mb-2'>Почта</p>
+						<div className='mt-8'>
+							<p className='text-lg mb-2'>Имя</p>
 							<Input
-								type='email'
-								value={isEmailFocused ? email : getShortEmail(email)}
-								onFocus={() => setIsEmailFocused(true)}
-								onBlur={() => setIsEmailFocused(false)}
-								onChange={e => setEmail(e.target.value)}
+								type='text'
+								value={first_name}
+								onChange={e => setUpdateFirstName(e.target.value)}
 								className='text-amber-50 font-black text-[18px]'
 							/>
 						</div>
+						<div className='mt-8'>
+							<p className='text-lg mb-2'>Фамилия</p>
+							<Input
+								type='text'
+								value={last_name}
+								onChange={e => setLastName(e.target.value)}
+								className='text-amber-50 font-black text-[18px]'
+							/>
+						</div>
+
+						<div className='mt-6'>
+							<p className='text-lg mb-2'>Почта</p>
+							<div className='text-amber-50 font-black text-[18px] bg-[#18181c] border border-[#2B2B30] rounded-md px-3 py-2 cursor-not-allowed'>
+								{getShortEmail(user.email)}
+							</div>
+						</div>
 					</CardContent>
 					<CardFooter>
-						<p className='text-center w-full text-muted-foreground'>
-							Здесь будет кнопка сохранения
-						</p>
+						{error && <p className='text-red-500 mt-2'>{error}</p>}
+						<button
+							className='log_reg_button'
+							onClick={handlerUpdate}
+							disabled={loading}
+						>
+							{loading ? 'Сохранение...' : 'Сохранить'}
+						</button>
 					</CardFooter>
 				</Card>
 			) : (

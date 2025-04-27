@@ -7,6 +7,16 @@ const api = axios.create({
   },
 });
 
+const createApiAuth = (token: string) => {
+	return axios.create({
+		baseURL: process.env.NEXT_PUBLIC_API_URL,
+		headers: {
+			Authorization: `Bearer ${token}`,
+			'Content-Type': 'application/json',
+		},
+	})
+}
+
 type LoginInput = { email: string; password: string };
 type RegisterInput = { email: string; password: string; nickname: string };
 
@@ -63,4 +73,23 @@ export async function getProfile(): Promise<{
     }
     throw e;
   }
+}
+
+type UpdateInput = { nickname?: string; first_name?: string; last_name?: string}
+
+export async function updateProfile(
+	token: string,
+	data: UpdateInput
+): Promise<void> {
+	const apiAuth = createApiAuth(token)
+	try {
+		const resp = await apiAuth.put('/profile/update', data)
+		return resp.data
+	} catch (e) {
+		if ((e as AxiosError).response) {
+			const err = (e as AxiosError).response!.data as ErrorResponse
+			throw new Error(err.message || 'Profile update failed')
+		}
+		throw e
+	}
 }
