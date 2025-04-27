@@ -52,6 +52,22 @@ header {
   @apply bg-[#2B2B30] text-[22px] text-stone-100 font-black text-center w-[132px] h-[48px] leading-[normal] border-none outline-none justify-center font-["Unbounded"] rounded-2xl ml-auto hover:bg-[#3B3B40] active:scale-95 transition-colors duration-300;
 }
 
+.log_reg_button{
+  @apply bg-[#2B2B30] text-[18px] text-stone-100 font-black text-center px-3.5 py-2 leading-[normal] border-none outline-none justify-center font-["Unbounded"] rounded-2xl hover:bg-[#3B3B40] active:scale-95 transition-colors duration-300 mt-4;
+}
+.yandex_auth_button {
+  background-color: #ffcc00;
+  color: black;
+  font-weight: bold;
+  padding: 12px 24px;
+  border-radius: 12px;
+  width: 75%;
+  margin: 10px auto;
+  display: block;
+  font-size: 18px;
+}
+
+
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);

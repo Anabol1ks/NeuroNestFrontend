@@ -1,7 +1,5 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import Script from 'next/script'
 import {
 	DialogContent,
 	DialogHeader,
@@ -9,6 +7,8 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+
+const BACK_URL = process.env.NEXT_PUBLIC_API_URL
 
 export default function DialogAuthComponent() {
 	return (
@@ -65,6 +65,14 @@ export default function DialogAuthComponent() {
 					<DialogDescription className='text-center mt-4 mb-4'>
 						ИЛИ
 					</DialogDescription>
+					<button
+						className='yandex_auth_button'
+						onClick={() =>
+							(window.location.href = `${BACK_URL}/auth/yandex/login`)
+						}
+					>
+						Войти через Яндекс
+					</button>
 				</DialogHeader>
 			</DialogContent>
 		</>
