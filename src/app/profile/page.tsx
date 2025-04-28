@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, ChangeEvent } from 'react'
 import HeaderComponent from '@/components/HeaderComponent'
 import { useAuth } from '@/contexts/AuthContext'
 import {
@@ -13,8 +13,9 @@ import {
 } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Input } from '@/components/ui/input'
-import { updateProfile } from '@/lib/api'
+import { updateProfile, uploadAvatar } from '@/lib/api'
 import Cookies from 'js-cookie';
+import { Label } from '@/components/ui/label'
 
 export default function Profile() {
 	const { user } = useAuth()
@@ -74,6 +75,47 @@ export default function Profile() {
 		}
 	};
 
+	const [file, setFile] = useState<File | null>(null)
+	const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setError('')
+		const selectedFile = e.target.files?.[0]
+		if (!selectedFile) return
+
+		// Проверяем MIME-тип
+		const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg']
+		if (!allowedTypes.includes(selectedFile.type)) {
+			setError('Только PNG и JPEG/JPG файлы разрешены.')
+			return
+		}
+
+		// Проверяем размер файла
+		const maxSize = 2 * 1024 * 1024 // 2 MB
+		if (selectedFile.size > maxSize) {
+			setError('Максимальный размер файла — 2 МБ.')
+			return
+		}
+
+		setFile(selectedFile) // Сохраняем файл в состояние
+	}
+
+	const handleAvatarUpload = async () => {
+		if (!file) {
+			alert('Пожалуйста, выберите файл для загрузки.')
+			return
+		}
+
+		try {
+			setLoading(true)
+			const updatedAvatarUrl = await uploadAvatar(token!, file) // Загружаем аватарку
+			if (user) user.profile_pic = updatedAvatarUrl
+			setFile(null) // Сбрасываем выбранный файл
+		} catch (error: any) {
+			console.error('Ошибка загрузки аватарки:', error.message)
+		} finally {
+			setLoading(false)
+		}
+	}
+
 	return (
 		<>
 			<HeaderComponent />
@@ -90,6 +132,24 @@ export default function Profile() {
 							<AvatarImage src={user.profile_pic} alt={user.nickname} />
 							<AvatarFallback>{user.nickname[0]}</AvatarFallback>
 						</Avatar>
+						<div className='mt-4'>
+							<Label htmlFor='avatar'>Загрузить аватарку</Label>
+							<Input
+								id='avatar'
+								type='file'
+								accept='image/png,image/jpeg,image/jpg'
+								onChange={handleFileChange}
+							/>
+							{error && <p className='text-sm text-red-600'>{error}</p>}
+						</div>
+
+						<button
+							className='log_reg_button mt-4'
+							onClick={handleAvatarUpload}
+							disabled={loading}
+						>
+							{loading ? 'Загрузка...' : 'Обновить аватарку'}
+						</button>
 
 						<div className='mt-8'>
 							<p className='text-lg mb-2'>Никнейм</p>

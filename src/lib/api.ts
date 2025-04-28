@@ -93,3 +93,35 @@ export async function updateProfile(
 		throw e
 	}
 }
+
+
+interface UploadAvatarResponse {
+	message: string
+	profile_pic: string
+}
+
+export async function uploadAvatar(token: string, file: File): Promise<string> {
+	const apiAuth = createApiAuth(token)
+	const formData = new FormData()
+	formData.append('avatar', file)
+
+	try {
+		const resp = await apiAuth.post<UploadAvatarResponse>(
+			'/profile/upload-avatar',
+			formData,
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+					'Content-Type': 'multipart/form-data',
+				},
+			}
+		)
+		return resp.data.profile_pic 
+	} catch (e) {
+		if ((e as AxiosError).response) {
+			const err = (e as AxiosError).response!.data as { message: string }
+			throw new Error(err.message || 'Upload avatar failed')
+		}
+		throw e
+	}
+}
