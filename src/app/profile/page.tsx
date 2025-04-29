@@ -15,14 +15,14 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Input } from '@/components/ui/input'
 import { updateProfile, uploadAvatar } from '@/lib/api'
 import Cookies from 'js-cookie';
-import { Label } from '@/components/ui/label'
-import { Pencil } from 'lucide-react'
+import { Pencil, Trash2 } from 'lucide-react'
 import AvatarDialogComponent from '@/components/AvatarDialogComponent'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
+import AvatarDelComponent from '@/components/AvatarDelComponent'
 
 export default function Profile() {
 	const { user } = useAuth()
-
+	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 	const [nickname, setNickname] = useState('')
 	const [first_name, setFirstName] = useState('')
 	const [last_name, setLastName] = useState('')
@@ -141,14 +141,28 @@ export default function Profile() {
 							/>
 							<AvatarFallback>{user.nickname[0]}</AvatarFallback>
 						</Avatar>
-						<div className='mt-[2%]'>
+						<div className='mt-[2%] flex items-center justify-center gap-x-2.5'>
 							<Dialog>
 								<DialogTrigger asChild>
-									<button className='mx-auto flex'>
+									<button className='inline-flex w-fit'>
 										<Pencil color='#8c8b8d' size={28} />
 									</button>
 								</DialogTrigger>
 								<AvatarDialogComponent onAvatarUpdate={setAvatarUrl} />
+							</Dialog>
+							<Dialog
+								open={isDeleteDialogOpen}
+								onOpenChange={setIsDeleteDialogOpen}
+							>
+								<DialogTrigger asChild>
+									<button className='inline-flex w-fit'>
+										<Trash2 color='#8c8b8d' size={28} />
+									</button>
+								</DialogTrigger>
+								<AvatarDelComponent
+									onAvatarUpdate={setAvatarUrl}
+									onCloseDialog={() => setIsDeleteDialogOpen(false)}
+								/>
 							</Dialog>
 						</div>
 						<div className='mt-8'>

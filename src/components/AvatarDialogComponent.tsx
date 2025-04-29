@@ -5,7 +5,7 @@ import {
 } from '@/components/ui/dialog'
 import { useAuth } from '@/contexts/AuthContext'
 import { useState, useRef, ChangeEvent, DragEvent } from 'react'
-import { uploadAvatar } from '@/lib/api'
+import { uploadAvatar, deleteAvatar } from '@/lib/api'
 import Cookies from 'js-cookie'
 import { Label } from '@/components/ui/label'
 
@@ -85,12 +85,11 @@ export default function AvatarDialogComponent({ onAvatarUpdate }: AvatarDialogCo
 	}
 
 	return (
-		<DialogContent className='max-w-[50%] mx-auto max-h-[90%] min-h-[40%] bg-[#1C1C21] rounded-2xl'>
+		<DialogContent className='w-full max-w-md mx-auto bg-[#1C1C21] rounded-2xl overflow-hidden'>
 			<DialogHeader>
 				<DialogDescription />
-
 				<div className='mt-4 flex flex-col items-center'>
-					<Label className='text-[#E6E8F2] text-2xl mb-4'>
+					<Label className='text-[#E6E8F2] text-2xl mb-8'>
 						Загрузить аватарку
 					</Label>
 
@@ -98,19 +97,19 @@ export default function AvatarDialogComponent({ onAvatarUpdate }: AvatarDialogCo
 						<img
 							src={previewUrl}
 							alt='Preview'
-							className='w-32 h-32 rounded-full object-cover border border-[#666] mb-4'
+							className='w-24 h-24 rounded-full object-cover border border-[#666] mb-4'
 						/>
 					)}
 					<div
 						onClick={openFileDialog}
 						onDrop={handleDrop}
 						onDragOver={handleDragOver}
-						className='w-[60%] h-[40%] flex items-center justify-center text-center text-[#A1A1AA] border-2 border-dashed border-[#444] rounded-xl bg-[#2E2E38] hover:bg-[#3B3B47] cursor-pointer transition-colors mb-4'
+						className='w-full max-w-xs min-h-[80px] px-4 py-3 flex items-center justify-center text-center text-[#A1A1AA] border-2 border-dashed border-[#444] rounded-xl bg-[#2E2E38] hover:bg-[#3B3B47] cursor-pointer transition-colors mb-4'
 					>
 						{file ? (
-							<span>{file.name}</span>
+							<span className='break-all text-sm'>{file.name}</span>
 						) : (
-							<span>Нажмите или перетащите файл сюда</span>
+							<span className='text-sm'>Нажмите или перетащите файл сюда</span>
 						)}
 					</div>
 
@@ -121,15 +120,41 @@ export default function AvatarDialogComponent({ onAvatarUpdate }: AvatarDialogCo
 						onChange={handleFileChange}
 						className='hidden'
 					/>
-
 					{error && <p className='text-sm text-red-500 mb-2'>{error}</p>}
-
 					<button
-						className='log_reg_button mt-2'
+						className={`log_reg_button mx-auto ${
+							loading ? 'opacity-50 cursor-not-allowed' : ''
+						}`}
 						onClick={handleAvatarUpload}
 						disabled={loading}
 					>
-						{loading ? 'Загрузка...' : 'Обновить аватарку'}
+						{loading ? (
+							<span className='flex items-center'>
+								<svg
+									className='animate-spin h-5 w-5 mr-2 text-white'
+									xmlns='http://www.w3.org/2000/svg'
+									fill='none'
+									viewBox='0 0 24 24'
+								>
+									<circle
+										className='opacity-25'
+										cx='12'
+										cy='12'
+										r='10'
+										stroke='currentColor'
+										strokeWidth='4'
+									></circle>
+									<path
+										className='opacity-75'
+										fill='currentColor'
+										d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z'
+									></path>
+								</svg>
+								Загрузка...
+							</span>
+						) : (
+							'Обновить аватарку'
+						)}
 					</button>
 				</div>
 			</DialogHeader>

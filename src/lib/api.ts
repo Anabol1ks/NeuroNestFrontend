@@ -125,3 +125,17 @@ export async function uploadAvatar(token: string, file: File): Promise<string> {
 		throw e
 	}
 }
+
+export async function deleteAvatar(token: string): Promise<void> {
+	const apiAuth = createApiAuth(token)
+	
+	try {
+		await apiAuth.delete('/profile/delete-avatar')
+	} catch (e) {
+		if ((e as AxiosError).response) {
+			const err = (e as AxiosError).response!.data as { message: string }
+			throw new Error(err.message || 'Delete avatar failed')
+		}
+		throw e
+	}
+}

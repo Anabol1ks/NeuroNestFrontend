@@ -67,6 +67,10 @@ header {
   font-size: 18px;
 }
 
+.red_button{
+  @apply bg-[#c50606] text-[18px] text-stone-100 font-black text-center px-3.5 py-2 leading-[normal] border-none outline-none justify-center font-["Unbounded"] rounded-2xl hover:bg-[#d34646] active:scale-95 transition-colors duration-300 mt-4;
+}
+
 
 :root {
   --radius: 0.625rem;
