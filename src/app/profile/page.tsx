@@ -16,6 +16,9 @@ import { Input } from '@/components/ui/input'
 import { updateProfile, uploadAvatar } from '@/lib/api'
 import Cookies from 'js-cookie';
 import { Label } from '@/components/ui/label'
+import { Pencil } from 'lucide-react'
+import AvatarDialogComponent from '@/components/AvatarDialogComponent'
+import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 
 export default function Profile() {
 	const { user } = useAuth()
@@ -25,6 +28,8 @@ export default function Profile() {
 	const [last_name, setLastName] = useState('')
 	const [email, setEmail] = useState('')
 	const [isEmailFocused, setIsEmailFocused] = useState(false)
+	const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+
 
 	useEffect(() => {
 		if (user) {
@@ -32,6 +37,7 @@ export default function Profile() {
 			// setEmail(user.email || '')
 			setFirstName(user.first_name || '')
 			setLastName(user.last_name || '')
+			setAvatarUrl(user.profile_pic || null)
 		}
 	}, [user])
 
@@ -129,28 +135,22 @@ export default function Profile() {
 					</CardHeader>
 					<CardContent>
 						<Avatar className='w-[30%] h-[30%] mx-auto bg-[#2B2B30] rounded-full flex items-center justify-center'>
-							<AvatarImage src={user.profile_pic} alt={user.nickname} />
+							<AvatarImage
+								src={avatarUrl || user.profile_pic}
+								alt={user.nickname}
+							/>
 							<AvatarFallback>{user.nickname[0]}</AvatarFallback>
 						</Avatar>
-						<div className='mt-4'>
-							<Label htmlFor='avatar'>Загрузить аватарку</Label>
-							<Input
-								id='avatar'
-								type='file'
-								accept='image/png,image/jpeg,image/jpg'
-								onChange={handleFileChange}
-							/>
-							{error && <p className='text-sm text-red-600'>{error}</p>}
+						<div className='mt-[2%]'>
+							<Dialog>
+								<DialogTrigger asChild>
+									<button className='mx-auto flex'>
+										<Pencil color='#8c8b8d' size={28} />
+									</button>
+								</DialogTrigger>
+								<AvatarDialogComponent onAvatarUpdate={setAvatarUrl} />
+							</Dialog>
 						</div>
-
-						<button
-							className='log_reg_button mt-4'
-							onClick={handleAvatarUpload}
-							disabled={loading}
-						>
-							{loading ? 'Загрузка...' : 'Обновить аватарку'}
-						</button>
-
 						<div className='mt-8'>
 							<p className='text-lg mb-2'>Никнейм</p>
 							<Input
