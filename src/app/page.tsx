@@ -11,6 +11,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog'
+import TokenRefresherComponent from '@/components/TokenRefreshComponent'
 
 
 const unbounded = Unbounded({ subsets: ['latin'] });
@@ -18,6 +19,7 @@ const unbounded = Unbounded({ subsets: ['latin'] });
 export default function Home() {
   return (
 		<>
+			<TokenRefresherComponent/>
 			<HeaderComponent />
 		</>
 	)

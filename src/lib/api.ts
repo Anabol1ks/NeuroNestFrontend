@@ -139,3 +139,20 @@ export async function deleteAvatar(token: string): Promise<void> {
 		throw e
 	}
 }
+
+export async function refToken(token: string): Promise<TokenResponse> {
+	const apiAuth = createApiAuth(token)
+
+	try {
+		const response = await apiAuth.post('/auth/refresh', {
+			refresh_token: token,
+		})
+		return response.data
+	} catch (e) {
+		if ((e as AxiosError).response) {
+			const err = (e as AxiosError).response!.data as { message: string }
+			throw new Error(err.message || 'Token refresh failed')
+		}
+		throw e
+	}
+}

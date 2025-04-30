@@ -19,6 +19,7 @@ import { Pencil, Trash2 } from 'lucide-react'
 import AvatarDialogComponent from '@/components/AvatarDialogComponent'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import AvatarDelComponent from '@/components/AvatarDelComponent'
+import TokenRefresherComponent from '@/components/TokenRefreshComponent'
 
 export default function Profile() {
 	const { user } = useAuth()
@@ -44,8 +45,9 @@ export default function Profile() {
 	// Функция для обрезки email
 	const getShortEmail = (email: string) => {
 		const [localPart, domain] = email.split('@')
-		if (localPart.length <= 5) return email // слишком короткий — не обрезаем
-		return `${localPart.slice(0, 3)}.............${localPart.slice(-1)}@${domain}`
+		if (localPart.length <= 3) return email // слишком короткий — не обрезаем
+		const maskedPart = '.'.repeat(localPart.length - 3) // заменяем остальные символы на точки
+		return `${localPart[0]}${maskedPart}${localPart.slice(-2)}@${domain}`
 	}
 
 	const [error, setError] = useState('');
@@ -124,6 +126,7 @@ export default function Profile() {
 
 	return (
 		<>
+			<TokenRefresherComponent/>
 			<HeaderComponent />
 			{user ? (
 				<Card className='mt-6 mx-auto max-w-2xl'>
@@ -165,36 +168,43 @@ export default function Profile() {
 								/>
 							</Dialog>
 						</div>
-						<div className='mt-8'>
-							<p className='text-lg mb-2'>Никнейм</p>
-							<Input
-								type='text'
-								value={nickname}
-								onChange={e => setNickname(e.target.value)}
-								className='text-amber-50 font-black text-[18px]'
-							/>
-						</div>
-						<div className='mt-8'>
-							<p className='text-lg mb-2'>Имя</p>
-							<Input
-								type='text'
-								value={first_name}
-								onChange={e => setUpdateFirstName(e.target.value)}
-								className='text-amber-50 font-black text-[18px]'
-							/>
-						</div>
-						<div className='mt-8'>
-							<p className='text-lg mb-2'>Фамилия</p>
-							<Input
-								type='text'
-								value={last_name}
-								onChange={e => setLastName(e.target.value)}
-								className='text-amber-50 font-black text-[18px]'
-							/>
+						<div className='mt-8 flex flex-col gap-6'>
+							{/* Никнейм на отдельной строке */}
+							<div className='flex flex-col items-center'>
+								<p className='text-lg mb-2 text-stone-50'>Никнейм</p>
+								<Input
+									type='text'
+									value={nickname}
+									onChange={e => setNickname(e.target.value)}
+									className='text-amber-50 font-black text-[18px] w-3/4 md:w-1/2'
+								/>
+							</div>
+
+							{/* Имя и Фамилия на одной строке */}
+							<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+								<div>
+									<p className='text-lg mb-2 text-stone-50'>Имя</p>
+									<Input
+										type='text'
+										value={first_name}
+										onChange={e => setUpdateFirstName(e.target.value)}
+										className='text-amber-50 font-black text-[18px] w-full'
+									/>
+								</div>
+								<div>
+									<p className='text-lg mb-2 text-stone-50'>Фамилия</p>
+									<Input
+										type='text'
+										value={last_name}
+										onChange={e => setLastName(e.target.value)}
+										className='text-amber-50 font-black text-[18px] w-full'
+									/>
+								</div>
+							</div>
 						</div>
 
 						<div className='mt-6'>
-							<p className='text-lg mb-2'>Почта</p>
+							<p className='text-lg mb-2 text-stone-50'>Почта</p>
 							<div className='text-amber-50 font-black text-[18px] bg-[#18181c] border border-[#2B2B30] rounded-md px-3 py-2 cursor-not-allowed'>
 								{getShortEmail(user.email)}
 							</div>
