@@ -83,47 +83,6 @@ export default function Profile() {
 		}
 	};
 
-	const [file, setFile] = useState<File | null>(null)
-	const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setError('')
-		const selectedFile = e.target.files?.[0]
-		if (!selectedFile) return
-
-		// Проверяем MIME-тип
-		const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg']
-		if (!allowedTypes.includes(selectedFile.type)) {
-			setError('Только PNG и JPEG/JPG файлы разрешены.')
-			return
-		}
-
-		// Проверяем размер файла
-		const maxSize = 2 * 1024 * 1024 // 2 MB
-		if (selectedFile.size > maxSize) {
-			setError('Максимальный размер файла — 2 МБ.')
-			return
-		}
-
-		setFile(selectedFile) // Сохраняем файл в состояние
-	}
-
-	const handleAvatarUpload = async () => {
-		if (!file) {
-			alert('Пожалуйста, выберите файл для загрузки.')
-			return
-		}
-
-		try {
-			setLoading(true)
-			const updatedAvatarUrl = await uploadAvatar(token!, file) // Загружаем аватарку
-			if (user) user.profile_pic = updatedAvatarUrl
-			setFile(null) // Сбрасываем выбранный файл
-		} catch (error: any) {
-			console.error('Ошибка загрузки аватарки:', error.message)
-		} finally {
-			setLoading(false)
-		}
-	}
-
 	return (
 		<>
 			<TokenRefresherComponent/>

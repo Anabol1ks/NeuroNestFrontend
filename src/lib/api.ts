@@ -156,3 +156,65 @@ export async function refToken(token: string): Promise<TokenResponse> {
 		throw e
 	}
 }
+
+type NoteInput = {title: string, content: string, related_ids: number[]}
+
+export async function createNote(token: string, data: NoteInput): Promise<void>{
+	const apiAuth = createApiAuth(token)
+
+	try {
+		await apiAuth.post("/notes/create", data);
+	} catch (e) {
+		if ((e as AxiosError).response){
+			const err = (e as AxiosError).response!.data as {message: string}
+			throw new Error(err.message || "Create note failed")
+		}
+		throw e
+	}
+}
+
+export type Attachment = {
+	file_size: number
+	file_type: string
+	file_url: string
+	id: number
+}
+
+export type Tag = {
+	id: number
+	name: string
+}
+
+export type Note = {
+	attachments: Attachment[]
+	content: string
+	created_at: string
+	id: number
+	is_archived: boolean
+	related_ids: number[]
+	summary: string
+	tags: Tag[]
+	title: string
+	topic_id: number
+	updated_at: string
+}
+
+export type NotesResponse = {
+	notes: Note[]
+	total: number
+}
+
+export async function getNotes(token: string): Promise<NotesResponse> {
+	const apiAuth = createApiAuth(token)
+
+	try {
+		const resp = await apiAuth.get<NotesResponse>("/notes/list");
+		return resp.data
+	} catch(e) {
+		if ((e as AxiosError).response) {
+			const err = (e as AxiosError).response!.data as ErrorResponse;
+			throw new Error(err.message || 'Could not fetch notes');
+		}
+		throw e
+	}
+}

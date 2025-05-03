@@ -1,3 +1,5 @@
+'use client'
+
 import Image from "next/image";
 import { Unbounded } from 'next/font/google'
 import icon48 from '@/public/NeuroNest48.svg'
@@ -12,15 +14,21 @@ import {
 	DialogTrigger,
 } from '@/components/ui/dialog'
 import TokenRefresherComponent from '@/components/TokenRefreshComponent'
-
-
-const unbounded = Unbounded({ subsets: ['latin'] });
+import { getNotes, NotesResponse } from '@/lib/api'
+import Cookies from 'js-cookie';
+import NotesComponent from '@/components/NotesComponent'
 
 export default function Home() {
   return (
 		<>
-			<TokenRefresherComponent/>
+			<TokenRefresherComponent />
 			<HeaderComponent />
+			<NotesComponent/>
+			{/* <Dialog>
+				<DialogTrigger asChild>
+					<button className='text-amber-50 bg-red-500'>Создать заметку</button>
+				</DialogTrigger>
+			</Dialog> */}
 		</>
 	)
 }
