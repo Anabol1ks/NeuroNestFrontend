@@ -157,21 +157,69 @@ export async function refToken(token: string): Promise<TokenResponse> {
 	}
 }
 
-type NoteInput = {title: string, content: string, related_ids: number[]}
+export type NoteInput = {
+	title: string
+	content: string
+	related_ids: number[]
+	tag_ids: number[]
+	attachments: File[]
+}
 
-export async function createNote(token: string, data: NoteInput): Promise<void>{
+export async function createNote(
+	token: string,
+	data: NoteInput
+): Promise<void> {
 	const apiAuth = createApiAuth(token)
 
+	// Create FormData object for multipart/form-data
+	const formData = new FormData()
+
+	// Add text fields
+	formData.append('title', data.title)
+	formData.append('content', data.content)
+
+	// Add arrays with the correct format: related_ids[] and tag_ids[]
+	if (data.related_ids && data.related_ids.length > 0) {
+		data.related_ids.forEach(id => {
+			formData.append('related_ids[]', id.toString())
+		})
+	}
+
+	if (data.tag_ids && data.tag_ids.length > 0) {
+		data.tag_ids.forEach(id => {
+			formData.append('tag_ids[]', id.toString())
+		})
+	}
+
+	// Add file attachments
+	if (data.attachments && data.attachments.length > 0) {
+		data.attachments.forEach(file => {
+			formData.append('attachments', file)
+		})
+	}
+
+	// Log the FormData entries to debug
+	console.log('FormData contents:')
+	for (let pair of formData.entries()) {
+		console.log(pair[0] + ': ' + pair[1])
+	}
+
 	try {
-		await apiAuth.post("/notes/create", data);
+		await apiAuth.post('/notes/create', formData, {
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			},
+		})
 	} catch (e) {
-		if ((e as AxiosError).response){
-			const err = (e as AxiosError).response!.data as {message: string}
-			throw new Error(err.message || "Create note failed")
+		if ((e as AxiosError).response) {
+			const err = (e as AxiosError).response!.data as { message: string }
+			throw new Error(err.message || 'Create note failed')
 		}
 		throw e
 	}
 }
+
+
 
 export type Attachment = {
 	file_size: number

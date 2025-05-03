@@ -168,7 +168,7 @@ export default function NotesComponent() {
 									</CardContent>
 									<CardFooter className='text-sm text-gray-500 transition-all duration-500'>
 										{new Date(note.created_at).toLocaleDateString()}
-										<p className='ml-auto font-black'>
+										<div className='ml-auto font-black'>
 											{note?.tags?.length > 0 ? (
 												<DropdownMenu
 													onOpenChange={open =>
@@ -195,7 +195,7 @@ export default function NotesComponent() {
 											) : (
 												<p className='px-3.5 py-2'>Тегов нет</p>
 											)}
-										</p>
+										</div>
 									</CardFooter>
 								</Card>
 							</div>

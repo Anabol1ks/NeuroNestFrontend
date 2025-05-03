@@ -17,12 +17,14 @@ import TokenRefresherComponent from '@/components/TokenRefreshComponent'
 import { getNotes, NotesResponse } from '@/lib/api'
 import Cookies from 'js-cookie';
 import NotesComponent from '@/components/NotesComponent'
+import CreateNoteComponent from '@/components/CreateNoteComponent'
 
 export default function Home() {
   return (
 		<>
 			<TokenRefresherComponent />
 			<HeaderComponent />
+			<CreateNoteComponent/>
 			<NotesComponent/>
 			{/* <Dialog>
 				<DialogTrigger asChild>
