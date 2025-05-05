@@ -1,6 +1,7 @@
 'use client'
 
-import Image from "next/image";
+import { useState, useCallback } from 'react'
+import Image from 'next/image'
 import { Unbounded } from 'next/font/google'
 import icon48 from '@/public/NeuroNest48.svg'
 import IconWithAnimation from '@/components/IconWithAnimation'
@@ -15,22 +16,24 @@ import {
 } from '@/components/ui/dialog'
 import TokenRefresherComponent from '@/components/TokenRefreshComponent'
 import { getNotes, NotesResponse } from '@/lib/api'
-import Cookies from 'js-cookie';
+import Cookies from 'js-cookie'
 import NotesComponent from '@/components/NotesComponent'
 import CreateNoteComponent from '@/components/CreateNoteComponent'
 
 export default function Home() {
-  return (
+	const [refreshNotes, setRefreshNotes] = useState(0)
+
+	// Function to trigger notes refresh
+	const handleNoteCreated = useCallback(() => {
+		setRefreshNotes(prev => prev + 1)
+	}, [])
+
+	return (
 		<>
 			<TokenRefresherComponent />
 			<HeaderComponent />
-			<CreateNoteComponent/>
-			<NotesComponent/>
-			{/* <Dialog>
-				<DialogTrigger asChild>
-					<button className='text-amber-50 bg-red-500'>Создать заметку</button>
-				</DialogTrigger>
-			</Dialog> */}
+			<CreateNoteComponent onNoteCreated={handleNoteCreated} />
+			<NotesComponent key={refreshNotes} />
 		</>
 	)
 }

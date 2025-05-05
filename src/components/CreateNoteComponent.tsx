@@ -4,8 +4,21 @@ import { NoteInput } from '@/lib/api'
 import { useState, useRef, ChangeEvent } from 'react'
 import { createNote } from '@/lib/api'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/contexts/AuthContext'
+import {
+	DialogContent,
+	DialogHeader,
+	DialogDescription,
+	Dialog,
+	DialogTrigger,
+} from '@/components/ui/dialog'
+import { Label } from '@/components/ui/label'
 
-export default function CreateNoteComponent() {
+export default function CreateNoteComponent({
+	onNoteCreated,
+}: {
+	onNoteCreated?: () => void
+}) {
 	const token = Cookies.get('access_token')
 	const [note, setNote] = useState<NoteInput>({
 		title: '',
@@ -17,6 +30,7 @@ export default function CreateNoteComponent() {
 
 	const [file, setFile] = useState<File[] | null>(null)
 	const fileInputRef = useRef<HTMLInputElement | null>(null)
+	const [open, setOpen] = useState(false)
 
 	const handleCreateNote = async () => {
 		try {
@@ -47,11 +61,18 @@ export default function CreateNoteComponent() {
 				fileInputRef.current.value = ''
 			}
 			console.log('Note created successfully')
+
+			// Close the dialog
+			setOpen(false)
+
+			// Notify parent component to refresh notes
+			if (onNoteCreated) {
+				onNoteCreated()
+			}
 		} catch (error) {
 			console.error('Error creating note:', error)
 		}
 	}
-
 
 	const handleInputChange = (
 		e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -99,94 +120,125 @@ export default function CreateNoteComponent() {
 		}))
 	}
 
+	const { user } = useAuth()
+
 	return (
-		<div className='flex flex-col space-y-4 p-4 max-w-2xl mx-auto'>
-			<h2 className='text-2xl font-bold mb-4'>Create New Note</h2>
+		<>
+			{user ? (
+				<>
+					<Dialog open={open} onOpenChange={setOpen}>
+						<DialogTrigger asChild>
+							<button className='auth_button'> создать заметку</button>
+						</DialogTrigger>
+						<DialogContent className='bg-[#1c1c21] rounded-2xl max-w-[45%] min-w-[10%] w-full h-auto'>
+							<div className='flex flex-col space-y-4 p-4 max-w-2xl mx-auto'>
+								<Label className='text-2xl font-bold text-[#E6E8F2]  mb-3'>
+									Создание заметки
+								</Label>
 
-			<div>
-				<label htmlFor='title' className='block text-sm font-medium mb-1'>
-					Title
-				</label>
-				<Input
-					id='title'
-					name='title'
-					value={note.title}
-					onChange={handleInputChange}
-					placeholder='Note title'
-					className='w-full'
-					required
-				/>
-			</div>
+								<div>
+									<Label
+										htmlFor='title'
+										className='block text-sm font-bold mb-1 text-[#E6E8F2]'
+									>
+										Title
+									</Label>
+									<Input
+										id='title'
+										name='title'
+										value={note.title}
+										onChange={handleInputChange}
+										placeholder='Note title'
+										className='text-amber-50 font-black text-[18px] pl-6 border-s-2 border-[#000000] bg-[#18181c] mx-auto mt-6 px-4 w-full h-14'
+										required
+									/>
+								</div>
 
-			<div>
-				<label htmlFor='content' className='block text-sm font-medium mb-1'>
-					Content
-				</label>
-				<textarea
-					id='content'
-					name='content'
-					value={note.content}
-					onChange={handleInputChange}
-					placeholder='Note content'
-					className='w-full min-h-[200px] rounded-md border border-input bg-transparent px-3 py-2'
-					required
-				/>
-			</div>
+								<div>
+									<Label
+										htmlFor='content'
+										className='block text-sm font-bold mb-1 text-[#E6E8F2]'
+									>
+										Content
+									</Label>
+									<textarea
+										id='content'
+										name='content'
+										value={note.content}
+										onChange={handleInputChange}
+										placeholder='Note content'
+										className='text-amber-50 font-black text-[18px w-full min-h-[150px] max-h-[160px] border-s-2 border-[#000000] bg-[#18181c] rounded-md borders px-3 py-2'
+										required
+									/>
+								</div>
 
-			<div>
-				<label htmlFor='tag_ids' className='block text-sm font-medium mb-1'>
-					Tags (comma-separated IDs)
-				</label>
-				<Input
-					id='tag_ids'
-					name='tag_ids'
-					onChange={handleTagInput}
-					placeholder='1, 2, 3'
-					className='w-full'
-				/>
-			</div>
+								<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+									<div>
+										<Label
+											htmlFor='tag_ids'
+											className='block text-sm font-bold mb-1 text-[#E6E8F2]'
+										>
+											Tags
+										</Label>
+										<Input
+											id='tag_ids'
+											name='tag_ids'
+											onChange={handleTagInput}
+											placeholder='1, 2, 3'
+											className='text-amber-50 font-black text-[18px] pl-6 border-s-2 border-[#000000] bg-[#18181c] mx-auto px-4 w-full h-14'
+										/>
+									</div>
 
-			<div>
-				<label htmlFor='related_ids' className='block text-sm font-medium mb-1'>
-					Related Notes (comma-separated IDs)
-				</label>
-				<Input
-					id='related_ids'
-					name='related_ids'
-					onChange={handleRelatedInput}
-					placeholder='1, 2, 3'
-					className='w-full'
-				/>
-			</div>
+									<div>
+										<Label
+											htmlFor='related_ids'
+											className='block text-sm font-bold mb-1 text-[#E6E8F2]'
+										>
+											Related Notes
+										</Label>
+										<Input
+											id='related_ids'
+											name='related_ids'
+											onChange={handleRelatedInput}
+											placeholder='1, 2, 3'
+											className='text-amber-50 font-black text-[18px] pl-6 border-s-2 border-[#000000] bg-[#18181c] mx-auto px-4 w-full h-14'
+										/>
+									</div>
+								</div>
 
-			<div>
-				<label htmlFor='attachments' className='block text-sm font-medium mb-1'>
-					Attachments
-				</label>
-				<Input
-					id='attachments'
-					name='attachments'
-					type='file'
-					ref={fileInputRef}
-					onChange={handleFileChange}
-					multiple
-					className='w-full'
-				/>
-				{file && file.length > 0 && (
-					<div className='mt-2'>
-						<p className='text-sm'>
-							Selected files: {file.map(f => f.name).join(', ')}
-						</p>
-					</div>
-				)}
-			</div>
+								<div className='w-full text-[#A1A1AA] border-2 border-dashed border-[#444] rounded-xl bg-[#2E2E38] hover:bg-[#3B3B47] cursor-pointer transition-colors mb-4'>
+									<Label
+										htmlFor='attachments'
+										className='block text-sm font-bold mb-1 text-[#E6E8F2]'
+									>
+										Attachments
+									</Label>
+									<Input
+										id='attachments'
+										name='attachments'
+										type='file'
+										ref={fileInputRef}
+										onChange={handleFileChange}
+										multiple
+										className='w-full'
+									/>
+									{file && file.length > 0 && (
+										<div className='mt-2'>
+											<p className='text-sm'>
+												Selected files: {file.map(f => f.name).join(', ')}
+											</p>
+										</div>
+									)}
+								</div>
 
-			<button
-				onClick={handleCreateNote}
-				className='bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md'
-			>
-				Create Note
-			</button>
-		</div>
+								<button onClick={handleCreateNote} className='log_reg_button'>
+									Create Note
+								</button>
+							</div>
+						</DialogContent>
+					</Dialog>
+				</>
+			) : null}
+		</>
 	)
 }
